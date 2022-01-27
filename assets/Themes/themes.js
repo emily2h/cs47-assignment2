@@ -1,6 +1,7 @@
 import { palette } from './palette';
 export default Themes = {
   light: {
+    key: 'light',
     bg: palette.lightGray,
     bgSecondary: palette.white,
     text: palette.black,
@@ -15,6 +16,7 @@ export default Themes = {
     },
   },
   dark: {
+    key: 'dark',
     bg: palette.lightBlack,
     bgSecondary: palette.lighterBlack,
     text: palette.white,
@@ -29,3 +31,4 @@ export default Themes = {
     },
   },
 };
+
