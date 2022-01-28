@@ -7,14 +7,17 @@ import {
   Platform,
   ImageBackground,
   Image,
+  TouchableOpacity,
   SafeAreaView
 } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Themes, Icons, Profiles } from './assets/Themes';
+import {useState} from 'react';
 
-const theme = Themes.light;
+
 
 export default function App() {
+  const [theme, setTheme] = useState(Themes.light);
   let [fontsLoaded] = useFonts({
     Sydney: require('./assets/Fonts/Sydney-Serial-Regular.ttf'),
     'Sydney-Bold': require('./assets/Fonts/Sydney-Serial-Bold.ttf'),
@@ -27,7 +30,7 @@ export default function App() {
     return (
       <View style={styles.iconAndText}> 
         <Image source={props.icon} style={styles.botBarIcon}/>
-        <Text style={styles.botText}>{props.text}</Text>
+        <Text style={{...styles.botText, ...{ color: theme.textSecondary }}}>{props.text}</Text>
       </View>
     );
   }
@@ -42,33 +45,37 @@ export default function App() {
     <View style={styles.profilePicInfo}>
       <ImageBackground source={props.source} style={styles.proPic} imageStyle={{borderRadius: 10}}>
         <View style={styles.proTextView}>
-          <Text style={{...styles.proText, ...{fontSize: Platform.isPad ? 48:32}}}>{props.name}</Text>
+          <Text style={{...styles.proText, ...{fontSize: Platform.isPad ? 48:32, color: theme.textSecondary}}}>{props.name}</Text>
         </View>
         <View style={styles.proTextView2}>
-          <Text style={{...styles.proText, ...{fontSize: Platform.isPad ? 32:20}}}>{props.distance}</Text>
+          <Text style={{...styles.proText, ...{fontSize: Platform.isPad ? 32:20, color: theme.textSecondary}}}>{props.distance}</Text>
         </View>
       </ImageBackground>
     </View>
   );
 }
-// const {colors} = useTheme();
-// console.log(Icons)
 return (
-    <View style={styles.container}>
+    <View style={{...styles.container, ...{backgroundColor: theme.bg}}}>
       <SafeAreaView style={styles.topContainer}>
         <View style = {{...styles.navBar,...{height: Platform.OS === "ios" ? 41 : 54}}}>
           <Image source={Icons.menu[theme.key]} style={styles.navBarIcon}/>
-          <Text style={{...styles.title, ...{fontSize: Platform.isPad ? 50 : 36}}}>ensom</Text>
-          <Image source={theme.key === "light" ? Icons.sun : Icons.moon} style={styles.navBarIcon}/>
+          <Text style={{...styles.title, ...{fontSize: Platform.isPad ? 50 : 36, color: theme.text }}}>ensom</Text>
+          <TouchableOpacity onPress={() => setTheme(theme.key === "dark" ? Themes.light : Themes.dark)}>
+            <Image source={theme.key === "light" ? Icons.sun : Icons.moon} style={styles.navBarIcon} />
+          </TouchableOpacity>
         </View>
-        <View style={{...styles.profile, ...{paddingHorizontal: Platform.isPad ? 50:20}}}>
+        <View style={{...styles.profile, ...{paddingHorizontal: Platform.isPad ? 50:20, 
+                                                shadowOffset: theme.shadows.shadowOffset,
+                                                shadowColor: theme.shadows.shadowColor,
+                                                shadowRadius: theme.shadows.shadowRadius,
+                                                shadowOpacity: theme.shadows.shadowOpacity}}}>
           <Profile 
             source={MTLProfile.source}
             name={MTLProfile.name}
             distance={MTLProfile.distance}
           />
-          <View style={styles.hotTake}>
-            <Text style={styles.hotTakeText}>My hottest take</Text>
+          <View style={{...styles.hotTake, ...{ backgroundColor: theme.bgSecondary }}}>
+            <Text style={{...styles.hotTakeText, ...{ color: theme.text }}}>My hottest take</Text>
             <View style={styles.playerSound}>
               <Image source={Icons.player[theme.key]} style={styles.player}/>
               <Image source={Icons.audioWave[theme.key]} style={styles.audioWave}/>
@@ -76,7 +83,7 @@ return (
           </View>
         </View>
       </SafeAreaView>
-      <View style={styles.botBar}>
+      <View style={{...styles.botBar, ...{ backgroundColor: theme.navigation }}}>
           <BottomIcon text='Discover' icon={Icons.discover[theme.key]}/>
           <BottomIcon text='Matches' icon={Icons.heart[theme.key]}/>
           <BottomIcon text='DMs' icon={Icons.messages[theme.key]}/>
@@ -88,7 +95,6 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.bg,
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexDirection: 'column',
@@ -109,7 +115,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    color: theme.text,
     fontFamily: 'Sydney-Bold', 
     paddingLeft: '25%',
     paddingRight: '25%',
@@ -118,10 +123,6 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center',
     flexDirection: 'column',
-    shadowOffset: theme.shadows.shadowOffset,
-    shadowColor: theme.shadows.shadowColor,
-    shadowRadius: theme.shadows.shadowRadius,
-    shadowOpacity: theme.shadows.shadowOpacity,
   },
   profilePicInfo: {
     justifyContent: 'center',
@@ -135,11 +136,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   proText: {
-    color: theme.textSecondary,
     fontFamily: 'Sydney',
   },
   proText2:{
-    color: theme.textSecondary,
     fontFamily: 'Sydney',
   },
   proTextView: {
@@ -159,12 +158,10 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 25,
-    backgroundColor: theme.bgSecondary,
   },
   hotTakeText:{
     fontFamily:'Sydney',
     fontSize: 28,
-    color: theme.text,
     paddingBottom: 20,
   },
   playerSound: {
@@ -184,7 +181,6 @@ const styles = StyleSheet.create({
   },
   botBar: {
     flexDirection: 'row',
-    backgroundColor: theme.navigation,
     width: '100%',
     height: 100,
     justifyContent: 'center',
@@ -196,7 +192,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   botText:{
-    color: theme.textSecondary,
     fontFamily: 'Sydney',
     fontSize: 20,
   },
